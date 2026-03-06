@@ -1,10 +1,10 @@
+import asyncio
 import json
-import os
+from pathlib import Path
+
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP, Context
 from netmiko import ConnectHandler
-from pathlib import Path
-import asyncio
 
 load_dotenv()
 
@@ -86,4 +86,4 @@ async def backup_all_configs(ctx: Context) -> str:
 
 
 if __name__ == "__main__":
-    mcp.run(transport="sse")
+    mcp.run(transport="streamable-http")
