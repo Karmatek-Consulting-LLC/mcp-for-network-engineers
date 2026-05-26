@@ -37,6 +37,16 @@ def get_inventory() -> str:
     return json.dumps(devices, indent=2)
 
 
+# Resource template: device lookup by host
+@mcp.resource("network://device/{host}")
+def get_device_resource(host: str) -> str:
+    """Get inventory details for a specific device by IP address."""
+    device = _get_device(host)
+    if not device:
+        return f"Device '{host}' not found in inventory."
+    return json.dumps({k: v for k, v in device.items() if k != "password"}, indent=2)
+
+
 # Tools: model-driven actions
 @mcp.tool()
 def list_devices() -> list[dict]:
