@@ -10,14 +10,16 @@ reason across multiple routers on its own.
 
   ```
   inventory.json   # Device inventory (Netmiko connection parameters)
-  server.py        # FastMCP server — tools, resource, and prompt
+  server.py        # FastMCP server — tools, resources, and a prompt
   ```
 
-The server exposes three MCP primitives:
+The server exposes all three MCP primitives:
 
 - **`list_devices` tool** — returns all devices in the inventory (credentials excluded)
 - **`run_command` tool** — runs any show command on a device via SSH
-- **`network://inventory` resource** — inventory as application-managed context for clients that support resources
+- **`backup_all_configs` tool** — backs up the running config from every device, reporting progress asynchronously
+- **`network://inventory` resource** — full inventory as application-managed context for clients that support resources
+- **`network://device/{host}` resource template** — parameterized per-device lookup for clients that support resource templates
 - **`ospf_audit` prompt** — pre-built OSPF health check workflow for clients that support prompts
 
 ## Requirements
@@ -30,8 +32,8 @@ The server exposes three MCP primitives:
 
   ```bash
   git clone git@github.com:Karmatek-Consulting-LLC/mcp-for-network-engineers.git
-  cd net-mcp
-  uv uv sync
+  cd mcp-for-network-engineers
+  uv sync
   ```
 
 Edit `inventory.json` to match your devices:
@@ -54,18 +56,18 @@ Edit `inventory.json` to match your devices:
   python server.py
   ```
 
-The server binds to port 8080 and listens for SSE connections at `http://localhost:8080/sse`.
+The server binds to port 8080 and serves the streamable-http transport at `http://localhost:8080/mcp`.
 
 ## Connecting a client
 
-Any MCP-compatible client works. The blog post
+Any MCP-compatible client that speaks streamable-http works. The blog post
 uses [langchain-mcp-client](https://github.com/guinacio/langchain-mcp-client), a Streamlit app that supports local (
 Ollama) and commercial LLM providers.
 
 Point it at:
 
   ```
-  http://localhost:8080/sse
+  http://localhost:8080/mcp
   ```
 
 For full resources and prompt support, use [MCP Inspector](https://github.com/modelcontextprotocol/inspector) or Claude

@@ -33,7 +33,7 @@ def _run_command(host: str, command: str) -> str:
 @mcp.resource("network://inventory")
 def get_inventory() -> str:
     """All devices in the network inventory, excluding credentials."""
-    devices = [{k: v for k, v in d.items() if k != "password"} for d in _load_inventory()]
+    devices = [{k: v for k, v in d.items() if k not in ("password", "secret")} for d in _load_inventory()]
     return json.dumps(devices, indent=2)
 
 
@@ -44,14 +44,14 @@ def get_device_resource(host: str) -> str:
     device = _get_device(host)
     if not device:
         return f"Device '{host}' not found in inventory."
-    return json.dumps({k: v for k, v in device.items() if k != "password"}, indent=2)
+    return json.dumps({k: v for k, v in device.items() if k not in ("password", "secret")}, indent=2)
 
 
 # Tools: model-driven actions
 @mcp.tool()
 def list_devices() -> list[dict]:
     """List all devices in the network inventory."""
-    return [{k: v for k, v in d.items() if k != "password"} for d in _load_inventory()]
+    return [{k: v for k, v in d.items() if k not in ("password", "secret")} for d in _load_inventory()]
 
 
 @mcp.tool()
